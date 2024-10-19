@@ -17,15 +17,21 @@ public:
    *******************************/
   // Get the last measured distance / mm
   float getDistance();
-  // Returns true if the sensor is returning processed data, otherwise its returning real-time data
+  /* Returns true if the sensor is returning processed data, otherwise its
+   * returning real-time data */
   bool isProcessed();
-  // Set processed = true to get the sensor do some pre-processing to reduce noise, otherwise the sensor will return real-time data
+  /* Set processed = true to get the sensor do some pre-processing to reduce
+   * noise, otherwise the sensor will return real-time data */
   void setProcessed(bool processed);
-  // For Debug purposes: The last time the sensor was asked to update the distance reading / ms since last reset
+  /* For Debug purposes: The last time the sensor was asked to update the
+   * distance reading / ms since last reset */
   unsigned long getLastReadTime();
-  // For Debug purposes: The time the last sensor reading was successful / mm since reset (i.e. a full data packet was received)
+  /* For Debug purposes: The time the last sensor reading was successful / mm
+   * since reset (i.e. a full data packet was received) */
   unsigned long getLastReadSuccess();
-  // For Debug purposes: The result of the last read request: -1 if there's a checksum error, -2 if the frame wasn't read correctly, otherwise a distance in mm
+  /* For Debug purposes: The result of the last read request: -1 if there's a
+   * checksum error, -2 if the frame wasn't read correctly, otherwise a distance
+   * in mm */
   int getLastReadResult();
   /* Status of the last attempt at retrieving a data packet from the sensor. 0 =
    * success, -1 if insufficient bytes available, -2 if the header byte couldn't
