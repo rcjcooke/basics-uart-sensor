@@ -3,7 +3,7 @@
 /************************
  * Constants
  ************************/
-namespace A02YYUWviaMultiUARTNS {
+namespace A02YYUWviaUARTStreamNS {
 
   // Data packet header byte
   static const byte HEADER_BYTE = 0xFF;
@@ -83,10 +83,10 @@ Stream* A02YYUWviaUARTStream::getSensorUART() {
  *******************************/
 // Reads the distance from the sensor (returns 0 if successful, -1 if there's a checksum error, -2 if the frame wasn't read correctly). If there wasn't enough data available, or this was called before the next read interval is due, then this returns 0;
 int A02YYUWviaUARTStream::readDistance() {
-  byte data[A02YYUWviaMultiUARTNS::PACKET_SIZE];
+  byte data[A02YYUWviaUARTStreamNS::PACKET_SIZE];
   unsigned long now = millis();
   // Note: There's a minimum 100ms between readings at best, so don't read if it's not been 100ms since the last correctly formatted reading
-  if (now - mLastReadTime >= A02YYUWviaMultiUARTNS::READ_INTERVAL_MS) {
+  if (now - mLastReadTime >= A02YYUWviaUARTStreamNS::READ_INTERVAL_MS) {
     bool success = readSensorData(data);
     if (success) {
       mLastReadSuccess = now;
@@ -105,24 +105,24 @@ int A02YYUWviaUARTStream::readDistance() {
 }
 
 bool A02YYUWviaUARTStream::readSensorData(byte* data) {
-  if (mSensorUART->available() < A02YYUWviaMultiUARTNS::PACKET_SIZE) return false;
+  if (mSensorUART->available() < A02YYUWviaUARTStreamNS::PACKET_SIZE) return false;
 
   // Read until we find the header byte or run out of data
   while (mSensorUART->available()) {
     byte firstByte = mSensorUART->read();
-    if (firstByte == A02YYUWviaMultiUARTNS::HEADER_BYTE) {
+    if (firstByte == A02YYUWviaUARTStreamNS::HEADER_BYTE) {
       data[0] = firstByte;
       break;
     }
   }
 
   // If we didn't find the header byte, return false
-  if (data[0] != A02YYUWviaMultiUARTNS::HEADER_BYTE) return false;
+  if (data[0] != A02YYUWviaUARTStreamNS::HEADER_BYTE) return false;
 
   // Read the rest of the packet
-  if (mSensorUART->available() >= A02YYUWviaMultiUARTNS::PACKET_SIZE - 1) {
+  if (mSensorUART->available() >= A02YYUWviaUARTStreamNS::PACKET_SIZE - 1) {
     // Note: Pointer arithmetic below to ensure we're only filling the byte array _after_ the first byte.
-    mSensorUART->readBytes(++data, A02YYUWviaMultiUARTNS::PACKET_SIZE - 1);
+    mSensorUART->readBytes(++data, A02YYUWviaUARTStreamNS::PACKET_SIZE - 1);
   } else {
     return false; // Incomplete packet
   }
@@ -131,7 +131,7 @@ bool A02YYUWviaUARTStream::readSensorData(byte* data) {
 }
 
 int A02YYUWviaUARTStream::processData(const byte* data) {
-  if (data[0] != A02YYUWviaMultiUARTNS::HEADER_BYTE) {
+  if (data[0] != A02YYUWviaUARTStreamNS::HEADER_BYTE) {
     // Invalid data packet
     return -2;
   }
@@ -143,8 +143,8 @@ int A02YYUWviaUARTStream::processData(const byte* data) {
   }
 
   int distance = (data[1] << 8) + data[2];
-  if (distance < A02YYUWviaMultiUARTNS::LOWER_LIMIT_MM) {
-    return A02YYUWviaMultiUARTNS::LOWER_LIMIT_MM;
+  if (distance < A02YYUWviaUARTStreamNS::LOWER_LIMIT_MM) {
+    return A02YYUWviaUARTStreamNS::LOWER_LIMIT_MM;
   } else {
     return distance;
   }
