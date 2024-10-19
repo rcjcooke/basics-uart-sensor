@@ -25,7 +25,6 @@ A02YYUWviaUARTStream::A02YYUWviaUARTStream(Stream* mUARTSerial, uint8_t modeSele
 
   // Set up the UART interface - The sensor supports a 9600 baud rate
   mSensorUART = mUARTSerial;
-  // mSensorUART->begin(9600);
 
   /* 
   The distance sensor has two operating modes, "processed" or "real-time". 
