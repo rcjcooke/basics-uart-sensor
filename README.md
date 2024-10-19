@@ -14,7 +14,7 @@ Waterproof ultrasounds distance sensor created by DFRobot. UART interface.
 
 This sensor can be powered off of the 5V output of an [[Arduino Mega 2560]] on USB with no additional power supply needed.
 
-Test setup:
+Test setup (do not be deceived by the colour of the wires. Annoyingly they DO NOT marry up to the appropriate power / ground etc. you'd expect because I'm using a grove cable as an extension because this sensor has the same connector as the grove standard, but it is NOT grove standard wiring - hence the sensor toast warnings above!):
 
 ![Test Setup Picture showing sensor wired up to Arduino Mega 2560](./media/IMG_0174.jpeg)
 
