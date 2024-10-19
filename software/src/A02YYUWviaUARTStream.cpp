@@ -77,6 +77,10 @@ Stream* A02YYUWviaUARTStream::getSensorUART() {
   return mSensorUART;
 }
 
+int A02YYUWviaUARTStream::getLastReadStatus() {
+  return mLastReadStatus;
+}
+
 /*******************************
  * Actions
  *******************************/
@@ -86,8 +90,8 @@ int A02YYUWviaUARTStream::readDistance() {
   unsigned long now = millis();
   // Note: There's a minimum 100ms between readings at best, so don't read if it's not been 100ms since the last correctly formatted reading
   if (now - mLastReadTime >= A02YYUWviaUARTStreamNS::READ_INTERVAL_MS) {
-    bool success = readSensorData(data);
-    if (success) {
+    mLastReadStatus = readSensorData(data);
+    if (mLastReadStatus == 0) {
       mLastReadSuccess = now;
       int result = processData(data);
       // A negative result is an error code
@@ -103,8 +107,8 @@ int A02YYUWviaUARTStream::readDistance() {
   return mLastReadResult;
 }
 
-bool A02YYUWviaUARTStream::readSensorData(byte* data) {
-  if (mSensorUART->available() < A02YYUWviaUARTStreamNS::PACKET_SIZE) return false;
+int A02YYUWviaUARTStream::readSensorData(byte* data) {
+  if (mSensorUART->available() < A02YYUWviaUARTStreamNS::PACKET_SIZE) return -1;
 
   // Read until we find the header byte or run out of data
   while (mSensorUART->available()) {
@@ -116,17 +120,17 @@ bool A02YYUWviaUARTStream::readSensorData(byte* data) {
   }
 
   // If we didn't find the header byte, return false
-  if (data[0] != A02YYUWviaUARTStreamNS::HEADER_BYTE) return false;
+  if (data[0] != A02YYUWviaUARTStreamNS::HEADER_BYTE) return -2;
 
   // Read the rest of the packet
   if (mSensorUART->available() >= A02YYUWviaUARTStreamNS::PACKET_SIZE - 1) {
     // Note: Pointer arithmetic below to ensure we're only filling the byte array _after_ the first byte.
     mSensorUART->readBytes(++data, A02YYUWviaUARTStreamNS::PACKET_SIZE - 1);
   } else {
-    return false; // Incomplete packet
+    return -3; // Incomplete packet
   }
 
-  return true;
+  return 0;
 }
 
 int A02YYUWviaUARTStream::processData(const byte* data) {

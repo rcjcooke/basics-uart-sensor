@@ -45,6 +45,7 @@ void loop() {
   serialDebugger->updateValue("distance / mm", sensor->getDistance());
   serialDebugger->updateValue("last read time / ms since reset", sensor->getLastReadTime());
   serialDebugger->updateValue("last successful read time / ms since reset", sensor->getLastReadSuccess());
+  serialDebugger->updateValue("last read status", sensor->getLastReadStatus());
   serialDebugger->updateValue("last read result", sensor->getLastReadResult());
   serialDebugger->updateValue("is pre-processed", sensor->isProcessed());
   serialDebugger->throttledPrintUpdate();
